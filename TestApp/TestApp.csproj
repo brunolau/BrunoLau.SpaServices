@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>3.9</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <UserSecretsId>26c767aa-a91f-4f51-bed8-6a4c4ee9ba9c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BrunoLau.SpaServices.Razor\BrunoLau.SpaServices.RazorSpaUtils.csproj" />
+    <ProjectReference Include="..\BrunoLau.SpaServices\BrunoLau.SpaServices.csproj" />
+  </ItemGroup>
+
+</Project>

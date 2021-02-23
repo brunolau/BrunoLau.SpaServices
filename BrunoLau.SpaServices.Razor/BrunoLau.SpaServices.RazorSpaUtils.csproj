@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Version>0.8.0</Version>
+    <Authors>Bruno Laurinec</Authors>
+    <Company>Bruno Laurinec</Company>
+    <Description>Library contains the PrerenderTagHelper class. Port of Microsoft.AspNetCore.SpaServices into .NET 5 by using the Jering.Javascript.NodeJS interop library</Description>
+    <Copyright>Initially written by Microsoft, ported by Bruno Laurinec</Copyright>
+    <PackageTags>nodeservices, webpack</PackageTags>
+    <RepositoryUrl>https://github.com/brunolau/BrunoLau.SpaServices</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/brunolau/BrunoLau.SpaServices</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BrunoLau.SpaServices\BrunoLau.SpaServices.csproj" />
+  </ItemGroup>
+
+</Project>
