@@ -33,18 +33,24 @@ namespace BrunoLau.SpaServices.Common
         /// Builds new INodeJSService instance independent of the app services container
         /// </summary>
         /// <param name="environmentVariables"></param>
+        /// <param name="projectPath"></param>
         /// <returns></returns>
-        public static INodeJSService BuildNewInstance(IDictionary<string, string> environmentVariables)
+        public static INodeJSService BuildNewInstance(IDictionary<string, string> environmentVariables, string projectPath)
         {
             var services = new ServiceCollection();
             services.AddNodeJS();
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            if (environmentVariables != null)
+            services.Configure<NodeJSProcessOptions>(options =>
             {
-                services.Configure<NodeJSProcessOptions>(options => options.EnvironmentVariables = environmentVariables);
-            }
+               if (environmentVariables != null)
+                  options.EnvironmentVariables = environmentVariables;
 
+               if (!string.IsNullOrWhiteSpace(projectPath))
+                  options.ProjectPath = projectPath;
+            });
+
+         
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
             return serviceProvider.GetRequiredService<INodeJSService>();
         }
 
