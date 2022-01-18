@@ -1,23 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup Label="Globals">
-    <SccProjectName>SAK</SccProjectName>
-    <SccProvider>SAK</SccProvider>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-  </PropertyGroup>
-
   <PropertyGroup>
-    <Description>Port of Microsoft.AspNetCore.SpaServices into .NET 5 by using the Jering.Javascript.NodeJS interop library</Description>
-    <TargetFramework>net5.0</TargetFramework>
+    <Description>Port of Microsoft.AspNetCore.SpaServices into .NET 6 by using the Jering.Javascript.NodeJS interop library</Description>
+    <TargetFramework>net6.0</TargetFramework>
+
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.8.0</Version>
+    <Version>6.0.0</Version>
     <Authors>Bruno Laurinec</Authors>
     <Company></Company>
     <Copyright>Initially written by Microsoft, ported by Bruno Laurinec</Copyright>
     <PackageTags>nodeservices, webpack</PackageTags>
     <RepositoryUrl>https://github.com/brunolau/BrunoLau.SpaServices</RepositoryUrl>
     <PackageProjectUrl>https://github.com/brunolau/BrunoLau.SpaServices</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,15 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jering.Javascript.NodeJS" Version="5.4.4" />
+    <PackageReference Include="Jering.Javascript.NodeJS" Version="6.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Routing.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
     <Exec Command="npm install" />
     <Exec Command="node node_modules/webpack/bin/webpack.js" />
   </Target>
-
 </Project>
