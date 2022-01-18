@@ -93,7 +93,7 @@ namespace BrunoLau.SpaServices.Webpack
             // middleware). And since this is a dev-time-only feature, it doesn't matter if the default transport isn't
             // as fast as some theoretical future alternative.
             // This should do it by using Jering.Javascript.NodeJS interop
-            var nodeJSService = NodeInteropFactory.BuildNewInstance(environmentVariables);
+            var nodeJSService = NodeInteropFactory.BuildNewInstance(environmentVariables, options.ProjectPath);
 
 
             // Ideally, this would be relative to the application's PathBase (so it could work in virtual directories)
