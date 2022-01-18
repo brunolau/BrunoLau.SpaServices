@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BrunoLau.SpaServices.Razor\BrunoLau.SpaServices.RazorSpaUtils.csproj" />
     <ProjectReference Include="..\BrunoLau.SpaServices\BrunoLau.SpaServices.csproj" />
   </ItemGroup>
 

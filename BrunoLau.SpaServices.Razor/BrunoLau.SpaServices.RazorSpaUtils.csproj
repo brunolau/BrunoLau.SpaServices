@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>6.0.0</Version>
+    <Version>6.0.1</Version>
     <Authors>Bruno Laurinec</Authors>
     <Company>Bruno Laurinec</Company>
     <Description>Library contains the PrerenderTagHelper class. Port of Microsoft.AspNetCore.SpaServices into .NET 5 by using the Jering.Javascript.NodeJS interop library</Description>
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BrunoLau.SpaServices\BrunoLau.SpaServices.csproj" />
+    <PackageReference Include="BrunoLau.SpaServices" Version="6.0.1" />
   </ItemGroup>
 
 </Project>

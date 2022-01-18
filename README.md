@@ -2,6 +2,7 @@
 
 # BrunoLau.SpaServices
 
+[![NuGet Badge](https://buildstats.info/nuget/BrunoLau.SpaServices?includePreReleases=true)](https://www.nuget.org/packages/BrunoLau.SpaServices)
 This is a port of deprecated package Microsoft.AspNetCore.SpaServices written by Microsoft. The package aims to bring back features that were removed with the release of .NET 5 - mainly the UseWebpackDevMiddleware extension method. To avoid naming confusions, the extension method has been renamed to UseWebpackDevMiddlewareEx. Migration is simple - where you would use the UseWebpackDevMiddleware() extension method, use the UseWebpackDevMiddlewareEx method. In case you are looking for NodeServices replacement, please take a look at [https://github.com/JeringTech/Javascript.NodeJS](https://github.com/JeringTech/Javascript.NodeJS) package, which this port also uses internally.
 
 See the original Microsoft package documentation below:

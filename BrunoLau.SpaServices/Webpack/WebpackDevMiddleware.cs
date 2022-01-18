@@ -2,11 +2,10 @@ using BrunoLau.SpaServices.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 
 namespace BrunoLau.SpaServices.Webpack
@@ -18,13 +17,14 @@ namespace BrunoLau.SpaServices.Webpack
     {
         private const string DefaultConfigFile = "webpack.config.js";
 
-        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
         {
             // Note that the aspnet-webpack JS code specifically expects options to be serialized with
             // PascalCase property names, so it's important to be explicit about this contract resolver
-            ContractResolver = new DefaultContractResolver(),
+            PropertyNamingPolicy = null,
 
-            TypeNameHandling = TypeNameHandling.None
+            // No need for indentation
+            WriteIndented = false
         };
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace BrunoLau.SpaServices.Webpack
             // Launch the dev server by using Node interop
             var devServerInfo = nodeJSService.InvokeFromStringAsync<WebpackDevServerInfo>(
                 EmbeddedResourceReader.Read(typeof(WebpackDevMiddleware), "/Content/Node/webpack-dev-middleware.js"), //Embedded JS file
-                args: new object[] { JsonConvert.SerializeObject(devServerOptions, jsonSerializerSettings) } //Options patched so that they work with aspnet-webpack package
+                args: new object[] { JsonSerializer.Serialize(devServerOptions, jsonSerializerOptions) } //Options patched so that they work with aspnet-webpack package
             ).Result;
 
             // If we're talking to an older version of aspnet-webpack, it will return only a single PublicPath,
