@@ -1,4 +1,5 @@
 using BrunoLau.SpaServices.Common;
+using Jering.Javascript.NodeJS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -87,15 +88,6 @@ namespace BrunoLau.SpaServices.Webpack
                 }
             }
 
-            // Unlike other consumers of NodeServices, WebpackDevMiddleware dosen't share Node instances, nor does it
-            // use your DI configuration. It's important for WebpackDevMiddleware to have its own private Node instance
-            // because it must *not* restart when files change (if it did, you'd lose all the benefits of Webpack
-            // middleware). And since this is a dev-time-only feature, it doesn't matter if the default transport isn't
-            // as fast as some theoretical future alternative.
-            // This should do it by using Jering.Javascript.NodeJS interop
-            var nodeJSService = NodeInteropFactory.BuildNewInstance(environmentVariables, options.ProjectPath);
-
-
             // Ideally, this would be relative to the application's PathBase (so it could work in virtual directories)
             // but it's not clear that such information exists during application startup, as opposed to within the context
             // of a request.
@@ -104,7 +96,7 @@ namespace BrunoLau.SpaServices.Webpack
                 : "/__webpack_hmr"; // Matches webpack's built-in default
 
             // Tell Node to start the server hosting webpack-dev-middleware
-            var devServerOptions = new
+            var devServerOptions = new WebpackDevServerArgs
             {
                 webpackConfigPath = Path.Combine(projectPath, options.ConfigFile ?? DefaultConfigFile),
                 suppliedOptions = options,
@@ -112,11 +104,8 @@ namespace BrunoLau.SpaServices.Webpack
                 hotModuleReplacementEndpointUrl = hmrEndpoint
             };
 
-            // Launch the dev server by using Node interop
-            var devServerInfo = nodeJSService.InvokeFromStringAsync<WebpackDevServerInfo>(
-                EmbeddedResourceReader.Read(typeof(WebpackDevMiddleware), "/Content/Node/webpack-dev-middleware.js"), //Embedded JS file
-                args: new object[] { JsonSerializer.Serialize(devServerOptions, jsonSerializerOptions) } //Options patched so that they work with aspnet-webpack package
-            ).Result;
+            // Launch the dev server by using Node interop with hack that fixes aspnet-webpack module to work wil Webpack 5 + webpack-dev-middleware 5
+            var devServerInfo = StartWebpackDevServer(environmentVariables, options.ProjectPath, devServerOptions, false);
 
             // If we're talking to an older version of aspnet-webpack, it will return only a single PublicPath,
             // not an array of PublicPaths. Handle that scenario.
@@ -135,6 +124,71 @@ namespace BrunoLau.SpaServices.Webpack
             }
         }
 
+        /// <summary>
+        /// Starts the webpack dev server. If the start fails for known reason, modifies the aspnet-webpack module to be compliant with webpack-dev-middleware 5.
+        /// For compatibility purposes as the change is rather samll it's easier to modify the existing module than to create new NPM package and enforce anyone to udpate.
+        /// </summary>
+        private static WebpackDevServerInfo StartWebpackDevServer(IDictionary<string, string> environmentVariables, string projectPath, WebpackDevServerArgs devServerArgs, bool fixAttempted)
+        {
+            // Unlike other consumers of NodeServices, WebpackDevMiddleware dosen't share Node instances, nor does it
+            // use your DI configuration. It's important for WebpackDevMiddleware to have its own private Node instance
+            // because it must *not* restart when files change (if it did, you'd lose all the benefits of Webpack
+            // middleware). And since this is a dev-time-only feature, it doesn't matter if the default transport isn't
+            // as fast as some theoretical future alternative.
+            // This should do it by using Jering.Javascript.NodeJS interop
+            var nodeJSService = NodeInteropFactory.BuildNewInstance(environmentVariables, projectPath);
+
+            try
+            {
+                return nodeJSService.InvokeFromStringAsync<WebpackDevServerInfo>(
+                    EmbeddedResourceReader.Read(typeof(WebpackDevMiddleware), "/Content/Node/webpack-dev-middleware.js"), //Embedded JS file
+                    args: new object[] { JsonSerializer.Serialize(devServerArgs, jsonSerializerOptions) } //Options patched so that they work with aspnet-webpack package
+                ).Result;
+            }
+            catch (Exception ex)
+            {
+                if (fixAttempted)
+                {
+                    throw;
+                }
+
+                if (ex != null && ex.Message.Contains("Dev Middleware has been initialized using an options object that does not match the API schema."))
+                {
+                    //Attempt to modify module file so that it doesn't contain arguments not recognized by the webpack-dev-middleware 5
+                    try
+                    {
+                        const string SEARCH_PATTERN = "at validate (";
+                        var startIndex = ex.Message.IndexOf(SEARCH_PATTERN);
+                        if (startIndex > -1)
+                        {
+                            startIndex += SEARCH_PATTERN.Length;
+                            var endIndex = ex.Message.IndexOf("webpack-dev-middleware", startIndex);
+                            var modulesPath = ex.Message.Substring(startIndex, endIndex - startIndex);
+
+                            if (Directory.Exists(modulesPath))
+                            {
+                                var modulePath = Path.Combine(modulesPath, @"aspnet-webpack\WebpackDevMiddleware.js");
+                                if (File.Exists(modulePath))
+                                {
+                                    var fileContent = File.ReadAllText(modulePath);
+                                    fileContent = fileContent.Replace("noInfo: true,", "");
+                                    fileContent = fileContent.Replace("watchOptions: webpackConfig.watchOptions", "");
+                                    File.WriteAllText(modulePath, fileContent);
+                                    nodeJSService.Dispose();
+
+                                    return StartWebpackDevServer(environmentVariables, projectPath, devServerArgs, true);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    { }
+                }
+
+                throw;
+            }
+        }
+
         private static void UseProxyToLocalWebpackDevMiddleware(this IApplicationBuilder appBuilder, string publicPath, int proxyToPort, TimeSpan requestTimeout)
         {
             // Note that this is hardcoded to make requests to "localhost" regardless of the hostname of the
@@ -150,6 +204,15 @@ namespace BrunoLau.SpaServices.Webpack
             var proxyOptions = new ConditionalProxyMiddlewareOptions(
                 "http", "localhost", proxyToPort.ToString(), requestTimeout);
             appBuilder.UseMiddleware<ConditionalProxyMiddleware>(publicPath, proxyOptions);
+        }
+
+        private class WebpackDevServerArgs
+        {
+            public string webpackConfigPath { get; set; }
+            public WebpackDevMiddlewareOptions suppliedOptions { get; set; }
+            public bool understandsMultiplePublicPaths { get; set; }
+            public string hotModuleReplacementEndpointUrl { get; set; }
+
         }
 
 #pragma warning disable CS0649

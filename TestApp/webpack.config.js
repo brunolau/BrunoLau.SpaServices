@@ -1,13 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 //const ExtractTextPlugin = require('extract-text-webpack-plugin');
 //const CheckerPlugin = require('ts-loader').CheckerPlugin;
 
 module.exports = (env) => {
-    const isDevBuild = !(env && env.prod);
+    const isDevBuild = (env == null || env.production != true);
     const buildMode = (isDevBuild ? 'development' : 'production');
-    const bundleOutputDir = (isDevBuild ? './wwwroot/dist' : './wwwroot/dist'); //demo purpose
+    const bundleOutputDir = (isDevBuild ? './wwwroot/dist-dev' : './wwwroot/dist');
     //const tsNameof = require("ts-nameof");
     console.log('Building for ' + buildMode + ' environment');
 
@@ -28,21 +27,15 @@ module.exports = (env) => {
                     exclude: [/node_modules/, /wwwroot/],
                     use: [
                         {
-                            loader: 'awesome-typescript-loader',
+                            loader: 'babel-loader',
                             options: {
-                                configFileName: './tsconfig.json',
-
-                                useCache: true,
-                                useTranspileModule: false,
-                                forceIsolatedModules: true,
-
-                                useBabel: true,
-                                babelOptions: {
-                                    babelrc: false, /* Important line */
-                                    presets: ["env", "es2015", "stage-2"],
-                                    plugins: ["jsx-v-model", "transform-vue-jsx"]
-                                },
-                            },
+                                cacheDirectory: false,
+                                plugins: ["@babel/plugin-syntax-dynamic-import"],
+                                presets: ['@vue/babel-preset-jsx']
+                            }
+                        },
+                        {
+                            loader: 'ts-loader'
                         }
                     ]
                 },
@@ -77,20 +70,19 @@ module.exports = (env) => {
             })
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
-            new HardSourceWebpackPlugin(),
             new webpack.EvalSourceMapDevToolPlugin({
                 filename: "[file].map",
                 fallbackModuleFilenameTemplate: '[absolute-resource-path]',
                 moduleFilenameTemplate: '[absolute-resource-path]',
             })
         ] : [
-                // Plugins that apply in production builds only
-                //new webpack.optimize.UglifyJsPlugin()
-                //new ExtractTextPlugin({
-                //    filename: '[name].css',
-                //    allChunks: true,
-                //    ignoreOrder: true
-                //})
-            ])
+            // Plugins that apply in production builds only
+            //new webpack.optimize.UglifyJsPlugin()
+            //new ExtractTextPlugin({
+            //    filename: '[name].css',
+            //    allChunks: true,
+            //    ignoreOrder: true
+            //})
+        ])
     }];
 };

@@ -1,0 +1,11 @@
+.vs
+TestApp/bin/
+TestApp/obj/
+TestApp/node_modules/
+TestApp/TestApp.csproj.user
+BrunoLau.SpaServices.Razor/bin/
+BrunoLau.SpaServices.Razor/obj/
+BrunoLau.SpaServices/bin/
+BrunoLau.SpaServices/obj/
+TestApp/package-lock.json
+TestApp/wwwroot/dist-dev/
