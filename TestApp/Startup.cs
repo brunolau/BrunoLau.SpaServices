@@ -34,6 +34,7 @@ namespace TestApp
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddlewareEx(new WebpackDevMiddlewareOptions
                 {
+                    TryPatchHotModulePackage = true,
                     HotModuleReplacement = true
                 });
             }

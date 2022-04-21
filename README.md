@@ -5,6 +5,15 @@
 [![NuGet Badge](https://buildstats.info/nuget/BrunoLau.SpaServices?includePreReleases=true)](https://www.nuget.org/packages/BrunoLau.SpaServices)
 This is a port of deprecated package Microsoft.AspNetCore.SpaServices written by Microsoft. The package aims to bring back features that were removed with the release of .NET 5 - mainly the UseWebpackDevMiddleware extension method. To avoid naming confusions, the extension method has been renamed to UseWebpackDevMiddlewareEx. Migration is simple - where you would use the UseWebpackDevMiddleware() extension method, use the UseWebpackDevMiddlewareEx method. In case you are looking for NodeServices replacement, please take a look at [https://github.com/JeringTech/Javascript.NodeJS](https://github.com/JeringTech/Javascript.NodeJS) package, which this port also uses internally.
 
+Sample usage:
+```
+app.UseWebpackDevMiddlewareEx(new WebpackDevMiddlewareOptions
+{
+    TryPatchHotModulePackage = true, //Attempts to patch the webpack-hot-middleware module overlay problem
+    HotModuleReplacement = true
+});
+```
+
 See the original Microsoft package documentation below:
 
 If you're building an ASP.NET Core application, and want to use Angular, React, Knockout, or another single-page app (SPA) framework, this NuGet package contains useful infrastructure for you.

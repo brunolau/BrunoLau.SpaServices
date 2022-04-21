@@ -104,6 +104,12 @@ namespace BrunoLau.SpaServices.Webpack
                 hotModuleReplacementEndpointUrl = hmrEndpoint
             };
 
+            // Perform the webpack-hot-middleware package patch so taht overlay works, until fixed by the package owner
+            if (options.TryPatchHotModulePackage)
+            {
+                PatchHotModuleMiddleware(projectPath);
+            }
+
             // Launch the dev server by using Node interop with hack that fixes aspnet-webpack module to work wil Webpack 5 + webpack-dev-middleware 5
             var devServerInfo = StartWebpackDevServer(environmentVariables, options.ProjectPath, devServerOptions, false);
 
@@ -186,6 +192,38 @@ namespace BrunoLau.SpaServices.Webpack
                 }
 
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to patch the webpack-hot-middleware so that it works with Webpack 5
+        /// </summary>
+        /// <param name="app"></param>
+        private static void PatchHotModuleMiddleware(string projectPath)
+        {
+            var hotModuleDir = Path.Combine(projectPath, @"node_modules\webpack-hot-middleware");
+            if (Directory.Exists(hotModuleDir))
+            {
+                var pathDat = Path.Combine(hotModuleDir, "patchDone.dat");
+                if (File.Exists(pathDat))
+                {
+                    return;
+                }
+
+                var middlewarePath = Path.Combine(hotModuleDir, "middleware.js");
+                if (File.Exists(middlewarePath))
+                {
+                    var middlewareContent = File.ReadAllText(middlewarePath);
+                    if (!middlewareContent.Contains("//patched by the init script"))
+                    {
+                        middlewareContent = middlewareContent.Replace("statsResult.toJson({", "statsResult.toJson({errors:true,warnings:true,");
+                        middlewareContent = middlewareContent.Replace("function publishStats(action", @"function formatErrors(n){return n&&n.length?'string'==typeof n[0]?n:n.map(function(n){return n.moduleName+' '+n.loc+'\n'+n.message}):[]} function publishStats(action");
+                        middlewareContent = middlewareContent.Replace("stats.warnings || []", "formatErrors(stats.warnings), //patched by the init script");
+                        middlewareContent = middlewareContent.Replace("stats.errors || []", "formatErrors(stats.errors), //patched by the init script");
+                        File.WriteAllText(middlewarePath, middlewareContent);
+                        File.WriteAllText(pathDat, "ok");
+                    }
+                }
             }
         }
 

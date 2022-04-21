@@ -30,6 +30,11 @@ namespace BrunoLau.SpaServices.Webpack
         /// </summary>
         public bool ReactHotModuleReplacement { get; set; }
 
+        /// <summary>
+        /// If true, attempts to fix the webpack-hot-middleware package overlay problem
+        /// </summary>
+        public bool TryPatchHotModulePackage { get; set; }
+
         /// <summary> 
         /// Specifies additional options to be passed to the Webpack Hot Middleware client, if used.
         /// </summary> 

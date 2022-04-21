@@ -21,8 +21,9 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:5000"
+      "hotReloadEnabled": false,
+      "applicationUrl": "http://localhost:5000",
+      "dotnetRunMessages": "true"
     }
   }
 }

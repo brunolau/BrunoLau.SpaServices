@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>6.0.2</Version>
+    <Version>6.0.3</Version>
     <Authors>Bruno Laurinec</Authors>
     <Company></Company>
     <Copyright>Initially written by Microsoft, ported by Bruno Laurinec</Copyright>
