@@ -1,8 +1,8 @@
 ﻿using System.Threading;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Jering.Javascript.NodeJS;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace BrunoLau.SpaServices.Prerendering
 {
@@ -20,8 +20,8 @@ namespace BrunoLau.SpaServices.Prerendering
 
         public DefaultSpaPrerenderer(
             INodeJSService nodeServices,
-            IApplicationLifetime applicationLifetime,
-            IHostingEnvironment hostingEnvironment,
+            IHostApplicationLifetime applicationLifetime,
+            IHostEnvironment hostingEnvironment,
             IHttpContextAccessor httpContextAccessor)
         {
             _applicationBasePath = hostingEnvironment.ContentRootPath;

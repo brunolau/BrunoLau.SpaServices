@@ -1,6 +1,6 @@
 ﻿using Jering.Javascript.NodeJS;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -62,7 +62,7 @@ namespace BrunoLau.SpaServices.Common
         public static INodeJSService BuildNewInstance(IServiceProvider serviceProvider)
         {
             Dictionary<string, string> environmentVariables = new Dictionary<string, string>();
-            var hostEnv = serviceProvider.GetService<IHostingEnvironment>();
+            var hostEnv = serviceProvider.GetService<IHostEnvironment>();
             if (hostEnv != null)
             {
                 environmentVariables["NODE_ENV"] = hostEnv.IsDevelopment() ? "development" : "production"; // De-facto standard values for Node

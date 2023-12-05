@@ -1,8 +1,7 @@
 using BrunoLau.SpaServices.Common;
-using Jering.Javascript.NodeJS;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,7 +65,7 @@ namespace BrunoLau.SpaServices.Webpack
             }
             else
             {
-                var hostEnv = appBuilder.ApplicationServices.GetService<IHostingEnvironment>();
+                var hostEnv = appBuilder.ApplicationServices.GetService<IHostEnvironment>();
                 if (hostEnv != null)
                 {
                     // In an ASP.NET environment, we can use the IHostingEnvironment data to auto-populate a few
