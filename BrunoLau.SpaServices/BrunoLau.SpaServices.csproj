@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Port of Microsoft.AspNetCore.SpaServices into .NET 7 by using the Jering.Javascript.NodeJS interop library</Description>
-    <TargetFramework>net7.0</TargetFramework>
+    <Description>Port of Microsoft.AspNetCore.SpaServices into .NET 8 by using the Jering.Javascript.NodeJS interop library</Description>
+    <TargetFramework>net8.0</TargetFramework>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>7.0.0</Version>
+    <Version>8.0.0</Version>
     <Authors>Bruno Laurinec</Authors>
     <Company></Company>
     <Copyright>Initially written by Microsoft, ported by Bruno Laurinec</Copyright>
